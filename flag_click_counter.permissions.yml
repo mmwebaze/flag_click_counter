@@ -1,0 +1,22 @@
+add flag click counter entities:
+  title: 'Create new Flag click counter entities'
+
+administer flag click counter entities:
+  title: 'Administer Flag click counter entities'
+  description: 'Allow to access the administration form to configure Flag click counter entities.'
+  restrict access: true
+
+delete flag click counter entities:
+  title: 'Delete Flag click counter entities'
+
+edit flag click counter entities:
+  title: 'Edit Flag click counter entities'
+
+access flag click counter overview:
+  title: 'Access the Flag click counter overview page'
+
+view published flag click counter entities:
+  title: 'View published Flag click counter entities'
+
+view unpublished flag click counter entities:
+  title: 'View unpublished Flag click counter entities'

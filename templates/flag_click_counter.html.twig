@@ -1,0 +1,22 @@
+{#
+/**
+ * @file flag_click_counter.html.twig
+ * Default theme implementation to present Flag click counter data.
+ *
+ * This template is used when viewing Flag click counter pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_flag_click_counter()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('flag_click_counter') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

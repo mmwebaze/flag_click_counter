@@ -1,0 +1,14 @@
+
+# Flag click counter menu items definition
+entity.flag_click_counter.collection:
+  title: 'Flag click counter list'
+  route_name: entity.flag_click_counter.collection
+  description: 'List Flag click counter entities'
+  parent: system.admin_structure
+  weight: 100
+
+flag_click_counter.admin.structure.settings:
+  title: Flag click counter settings
+  description: 'Configure Flag click counter entities'
+  route_name: flag_click_counter.settings
+  parent: system.admin_structure
