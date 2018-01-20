@@ -1,7 +1,7 @@
 services:
   flag_click_counter.service:
     class: Drupal\flag_click_counter\Service\FlagClickCounterService
-    arguments: ['@flag', '@current_user', '@entity_type.manager',  '@database']
+    arguments: ['@flag', '@entity_type.manager',  '@database']
 
   flag_click_counter.route_subscriber:
     class: Drupal\flag_click_counter\Routing\FlagClickCounterRouteSubscriber

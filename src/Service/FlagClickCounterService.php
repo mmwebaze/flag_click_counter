@@ -18,14 +18,14 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
     /**
      * Constructs a new FlagClickCounterService object.
      */
-    public function __construct(FlagService $flag, AccountInterface $current_user,
+    public function __construct(FlagService $flag,
                                 EntityTypeManagerInterface $entity_type_manager, Connection $connection) {
         $this->flagService = $flag;
-        $this->currentUser = $current_user;
+
         $this->entityTypeManager = $entity_type_manager;
         $this->connection = $connection;
     }
-    public function flag($flag, $entity, Request $request, array $entities){
-
+    public function flag($flagId, $entityId, Request $request, $user_id){
+        drupal_set_message($flagId.' -> '.$entityId.' <> '.$user_id);
     }
 }

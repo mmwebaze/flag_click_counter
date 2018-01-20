@@ -4,6 +4,7 @@ namespace Drupal\flag_click_counter\Controller;
 
 
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\Controller\ActionLinkController;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
@@ -13,16 +14,20 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FlagClickCounterController extends ActionLinkController {
     protected $flagClickCounterServive;
+    protected $currentUser;
 
-    public function __construct(FlagClickCounterServiceInterface $flagClickCounterServive, FlagServiceInterface $flag, RendererInterface $renderer){
+    public function __construct(FlagClickCounterServiceInterface $flagClickCounterServive, AccountInterface $current_user, FlagServiceInterface $flag, RendererInterface $renderer){
         parent::__construct($flag, $renderer);
         $this->flagClickCounterServive = $flagClickCounterServive;
+        $this->currentUser = $current_user;
     }
     /**
      * {@inheritdoc}
      */
     public function flag(FlagInterface $flag, $entity_id, Request $request) {
-        drupal_set_message('FLag click counter');
+        drupal_set_message('FLag click counter'.$this->currentUser->id());
+
+        $this->flagClickCounterServive->flag($flag->id(), $entity_id, $request, $this->currentUser->id());
 
         return parent::flag($flag, $entity_id, $request);
     }
@@ -32,6 +37,7 @@ class FlagClickCounterController extends ActionLinkController {
     public static function create(ContainerInterface $container) {
         return new static(
             $container->get('flag_click_counter.service'),
+            $container->get('current_user'),
             $container->get('flag'),
             $container->get('renderer')
         );
