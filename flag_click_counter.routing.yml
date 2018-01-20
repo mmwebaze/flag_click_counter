@@ -1,0 +1,7 @@
+flag_click_counter.flag:
+  #path: '/community_notifier/flag'
+  defaults:
+    _controller: '\Drupal\flag_click_counter\Controller\FlagClickCounterController::flag'
+    _title: 'flag'
+  requirements:
+    _permission: 'access content'
