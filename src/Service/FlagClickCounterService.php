@@ -39,6 +39,11 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
             ->execute();
         return $storage->loadMultiple($ids);
     }
+    public function getFlagClickCounterEntities(){
+        $storage = $this->entityTypeManager->getStorage('flag_click_counter');
+        $ids = $storage->getQuery()->execute();
+        return $storage->loadMultiple($ids);
+    }
     public function countFlag($flagId, $userId){
         $flagClickCounterEntities = $this->getUserFlagClickCounterEntity($flagId, $userId);
         if (count($flagClickCounterEntities) == 0){
