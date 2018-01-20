@@ -18,8 +18,9 @@ class FlagClickCounterListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('Flag click counter ID');
+    $header['id'] = $this->t('#');
     $header['name'] = $this->t('Flag Name');
+    $header['user_id'] = $this->t('User ID');
     $header['flag_id'] = $this->t('Flag ID');
     $header['total_clicks'] = $this->t('Total clicks');
     return $header + parent::buildHeader();
@@ -36,6 +37,7 @@ class FlagClickCounterListBuilder extends EntityListBuilder {
       'entity.flag_click_counter.edit_form',
       ['flag_click_counter' => $entity->id()]
     );
+    $row['user_id'] = $entity->getOwnerId();
     $row['flag_id'] = $entity->getFlagId();
     $row['total_clicks'] = $entity->getTotalClicks();
     return $row + parent::buildRow($entity);
