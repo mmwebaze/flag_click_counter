@@ -40,8 +40,8 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
         return $storage->loadMultiple($ids);
     }
     public function countFlag($flagId, $userId){
-        if (count($this->getUserFlagClickCounterEntity($flagId, $userId)) == 0){
-            drupal_set_message('Create entity and set count from 0 to 1');
+        $flagClickCounterEntities = $this->getUserFlagClickCounterEntity($flagId, $userId);
+        if (count($flagClickCounterEntities) == 0){
             FlagClickCounter::create([
                 'uid' => $userId,
                 'name' => $this->flagService->getFlagById($flagId)->label(),
@@ -49,8 +49,14 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
                 'total_clicks' => 1,
             ])->save();
         }
+        else if (count($flagClickCounterEntities) == 1){
+            $flagClickCounter = current($flagClickCounterEntities);
+            $total_clicks = $flagClickCounter->getTotalClicks();
+            $flagClickCounter->setTotalClicks($total_clicks);
+            $flagClickCounter->save();
+        }
         else{
-            drupal_set_message('Update count by 1');
+
         }
     }
 }

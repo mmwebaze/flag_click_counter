@@ -256,11 +256,10 @@ class FlagClickCounter extends ContentEntityBase implements FlagClickCounterInte
       return $this;
   }
   public function getFlagId(){
-      drupal_set_message($this->get('flag_id')->target_id);
       return $this->get('flag_id')->target_id;
   }
     public function setTotalClicks($total_clicks){
-        $this->set('total_clicks', $total_clicks);
+        $this->set('total_clicks', $total_clicks + 1);
         return $this;
     }
     public function getTotalClicks(){

@@ -25,7 +25,6 @@ class FlagClickCounterController extends ActionLinkController {
      * {@inheritdoc}
      */
     public function flag(FlagInterface $flag, $entity_id, Request $request) {
-        drupal_set_message('FLag click counter'.$this->currentUser->id());
 
         $this->flagClickCounterServive->flag($flag->id(), $entity_id, $request, $this->currentUser->id());
 
