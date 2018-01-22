@@ -27,8 +27,7 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
         $this->connection = $connection;
     }
     public function flag($flagId, $entityId, Request $request, $user_id){
-        //drupal_set_message($flagId.' -> '.$entityId.' <> '.$user_id.'--'.$this->flagService->getFlagById($flagId)->label());
-        $this->countFlag($flagId, $user_id);
+        $this->countFlag($flagId, $user_id, $entityId);
     }
     public function getUserFlagClickCounterEntity($flagId, $userId){
         //$this->flagService->getFlagById($flagId)->id();
@@ -44,7 +43,7 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
         $ids = $storage->getQuery()->execute();
         return $storage->loadMultiple($ids);
     }
-    public function countFlag($flagId, $userId){
+    public function countFlag($flagId, $userId, $entityId){
         $flagClickCounterEntities = $this->getUserFlagClickCounterEntity($flagId, $userId);
         if (count($flagClickCounterEntities) == 0){
             FlagClickCounter::create([
@@ -53,15 +52,30 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
                 'flag_id' => $this->flagService->getFlagById($flagId)->id(),
                 'total_clicks' => 1,
             ])->save();
+            $entity = $this->getEntityById($entityId);
+            $this->updateCount($entity);
+            //drupal_set_message(json_encode($entity->get('field_total_clicks')->getValue(), 1).' *****');
         }
         else if (count($flagClickCounterEntities) == 1){
             $flagClickCounter = current($flagClickCounterEntities);
             $total_clicks = $flagClickCounter->getTotalClicks();
             $flagClickCounter->setTotalClicks($total_clicks);
             $flagClickCounter->save();
+            $entity = $this->getEntityById($entityId);
+            $this->updateCount($entity);
+            //drupal_set_message(json_encode($entity->get('field_total_clicks')->getValue(), 1).' *****');
         }
         else{
 
         }
+    }
+    public function getEntityById($entity_id, $entity_type = 'node'){
+        $storage = $this->entityTypeManager->getStorage($entity_type);
+        return $storage->load($entity_id);
+    }
+    private function updateCount($entity){
+        $previous_total = $entity->get('field_total_clicks')->getValue();
+        $entity->set('field_total_clicks', $previous_total[0]['value'] + 1);
+        $entity->save();
     }
 }

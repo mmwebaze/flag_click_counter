@@ -4,6 +4,7 @@ namespace Drupal\flag_click_counter\Plugin\views\field;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  *
@@ -37,4 +38,12 @@ class FlagClickCounterTotalClicksField extends FieldPluginBase{
      */
     public function render(ResultRow $values) {}
 
+    public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+        return new static(
+            $configuration,
+            $plugin_id,
+            $plugin_definition,
+            $container->get('flag_click_counter.service')
+        );
+    }
 }
