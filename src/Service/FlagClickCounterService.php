@@ -54,7 +54,6 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
             ])->save();
             $entity = $this->getEntityById($entityId);
             $this->updateCount($entity);
-            //drupal_set_message(json_encode($entity->get('field_total_clicks')->getValue(), 1).' *****');
         }
         else if (count($flagClickCounterEntities) == 1){
             $flagClickCounter = current($flagClickCounterEntities);
@@ -63,7 +62,6 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
             $flagClickCounter->save();
             $entity = $this->getEntityById($entityId);
             $this->updateCount($entity);
-            //drupal_set_message(json_encode($entity->get('field_total_clicks')->getValue(), 1).' *****');
         }
         else{
 
