@@ -1,0 +1,52 @@
+<?php
+
+function flag_click_counter_schema() {
+    $schema['flag_click_counter'] = array(
+        'description' => 'Stores user flag click counts.',
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'not null' => TRUE,
+                'description' => 'Primary Key',
+            ),
+            'uid' => array(
+                'type' => 'int',
+                'not null' => TRUE,
+                'default' => 0,
+                'description' => "Clicker's user {users}.uid",
+            ),
+            'flag' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'default' => '',
+                'description' => "Clicked flag machine name",
+            ),
+            'entity_type' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'default' => '',
+                'description' => "Entity type the flag is associated with.",
+            ),
+            'entity_id' => array(
+                'type' => 'int',
+                'not null' => TRUE,
+                'default' => 0,
+                'description' => "Entity id the flag is attached to.",
+            ),
+            'click_count' => array(
+                'type' => 'int',
+                'not null' => TRUE,
+                'default' => 1,
+                'description' => "Number of clicks per user per flag",
+            ),
+        ),
+        'primary key' => array('id'),
+        'indexes' => array(
+            'flag' => array('flag'),
+        ),
+    );
+
+    return $schema;
+}

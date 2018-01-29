@@ -1,9 +1,10 @@
 services:
   flag_click_counter.service:
     class: Drupal\flag_click_counter\Service\FlagClickCounterService
-    arguments: ['@flag', '@entity_type.manager',  '@database']
+    arguments: ['@entity_type.manager',  '@database', '@current_user']
 
-  flag_click_counter.route_subscriber:
-    class: Drupal\flag_click_counter\Routing\FlagClickCounterRouteSubscriber
+  flag_click_counter.event_subscriber:
+    class: Drupal\flag_click_counter\EventSubscriber\FlagClickCounterEventSubscriber
+    arguments: ['@flag_click_counter.service']
     tags:
       - { name: event_subscriber }

@@ -6,12 +6,8 @@ namespace Drupal\flag_click_counter\Service;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\flag\FlagService;
-use Drupal\flag_click_counter\Entity\FlagClickCounter;
-use Symfony\Component\HttpFoundation\Request;
 
 class FlagClickCounterService implements FlagClickCounterServiceInterface {
-    protected $flagService;
     protected $entityTypeManager;
     protected $currentUser;
     protected $connection;
@@ -19,61 +15,73 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
     /**
      * Constructs a new FlagClickCounterService object.
      */
-    public function __construct(FlagService $flag,
-                                EntityTypeManagerInterface $entity_type_manager, Connection $connection) {
-        $this->flagService = $flag;
-
+    public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $connection, AccountInterface $currentUser) {
         $this->entityTypeManager = $entity_type_manager;
         $this->connection = $connection;
+        $this->currentUser = $currentUser;
     }
-    public function flag($flagId, $entityId, Request $request, $user_id){
-        $this->countFlag($flagId, $user_id, $entityId);
+    public function countFlag($flagId, $entityDetails){
+        $userId = $this->currentUser->id();
+        $flaggedEntity = $this->getEntityById($entityDetails[1], $entityDetails[0]);
+        drupal_set_message($flaggedEntity->label());
+        $this->updateCount($userId, $flagId, $entityDetails);
     }
-    public function getUserFlagClickCounterEntity($flagId, $userId){
-        //$this->flagService->getFlagById($flagId)->id();
-        $storage = $this->entityTypeManager->getStorage('flag_click_counter');
-        $ids = $storage->getQuery()
-            ->condition('user_id', $userId, '=')
-            ->condition('flag_id', $flagId, '=')
-            ->execute();
-        return $storage->loadMultiple($ids);
-    }
-    public function getFlagClickCounterEntities(){
-        $storage = $this->entityTypeManager->getStorage('flag_click_counter');
-        $ids = $storage->getQuery()->execute();
-        return $storage->loadMultiple($ids);
-    }
-    public function countFlag($flagId, $userId, $entityId){
-        $flagClickCounterEntities = $this->getUserFlagClickCounterEntity($flagId, $userId);
-        if (count($flagClickCounterEntities) == 0){
-            FlagClickCounter::create([
-                'uid' => $userId,
-                'name' => $this->flagService->getFlagById($flagId)->label(),
-                'flag_id' => $this->flagService->getFlagById($flagId)->id(),
-                'total_clicks' => 1,
-            ])->save();
-            $entity = $this->getEntityById($entityId);
-            $this->updateCount($entity);
+    public function getCount($entity_id, $userId){
+        $result = [];
+        $query = $this->connection->select('flag_click_counter', 'fcc');
+        $results = $query->fields('fcc', ['uid','click_count'])
+            ->condition('fcc.entity_id', $entity_id)
+            ->condition('fcc.uid', $userId)->execute()->fetchAssoc();
+        foreach ($results as $result){
+            $result[0] = $result['click_count'];
+            //drupal_set_message($result['click_count']);
         }
-        else if (count($flagClickCounterEntities) == 1){
-            $flagClickCounter = current($flagClickCounterEntities);
-            $total_clicks = $flagClickCounter->getTotalClicks();
-            $flagClickCounter->setTotalClicks($total_clicks);
-            $flagClickCounter->save();
-            $entity = $this->getEntityById($entityId);
-            $this->updateCount($entity);
-        }
-        else{
-
-        }
+        return $result[0];
     }
     public function getEntityById($entity_id, $entity_type = 'node'){
         $storage = $this->entityTypeManager->getStorage($entity_type);
         return $storage->load($entity_id);
     }
-    private function updateCount($entity){
-        $previous_total = $entity->get('field_total_clicks')->getValue();
-        $entity->set('field_total_clicks', $previous_total[0]['value'] + 1);
-        $entity->save();
+    private function updateCount($userId, $flagId, $entityDetails){
+        $query = $this->connection->select('flag_click_counter', 'fcc');
+        $results = $query->fields('fcc', ['uid', 'flag','entity_id'])
+            ->condition('fcc.uid', $userId)
+            ->condition('fcc.flag', $flagId)
+            ->condition('fcc.entity_id', $entityDetails[1])
+            ->execute()->fetchall();
+
+        if (count($results) == 0){
+            drupal_set_message("do insert new record ".$userId." and ".$flagId);
+            $this->createRecord($userId, $flagId, $entityDetails[0], $entityDetails[1], 1);
+        }
+        else{
+            drupal_set_message("Update user ".$userId." and ".$flagId." count");
+            $this->updateRecord($userId, $flagId, $entityDetails[1]);
+        }
+    }
+    private function createRecord($uid, $flag, $entityType, $entity_id, $count){
+        $this->connection->insert('flag_click_counter')
+            ->fields([
+                'uid',
+                'flag',
+                'entity_type',
+                'entity_id',
+                'click_count',
+            ])
+            ->values(array(
+                $uid,
+                $flag,
+                $entityType,
+                $entity_id,
+                $count
+            ))
+            ->execute();
+    }
+    private function updateRecord($uid, $flag, $entityId){
+        $this->connection->update('flag_click_counter')
+            ->expression('click_count', 'click_count + 1')
+            ->condition('$flag', $flag)
+            ->condition('uid', $uid)
+            ->condition('entity_id', $entityId)->execute();
     }
 }
