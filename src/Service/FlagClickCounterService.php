@@ -23,7 +23,6 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
     public function countFlag($flagId, $entityDetails){
         $userId = $this->currentUser->id();
         $flaggedEntity = $this->getEntityById($entityDetails[1], $entityDetails[0]);
-        drupal_set_message($flaggedEntity->label());
         $this->updateCount($userId, $flagId, $entityDetails);
     }
     public function getCount($entity_id, $userId){
@@ -34,7 +33,6 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
             ->condition('fcc.uid', $userId)->execute()->fetchAssoc();
         foreach ($results as $result){
             $result[0] = $result['click_count'];
-            //drupal_set_message($result['click_count']);
         }
         return $result[0];
     }
@@ -51,11 +49,9 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
             ->execute()->fetchall();
 
         if (count($results) == 0){
-            drupal_set_message("do insert new record ".$userId." and ".$flagId);
             $this->createRecord($userId, $flagId, $entityDetails[0], $entityDetails[1], 1);
         }
         else{
-            drupal_set_message("Update user ".$userId." and ".$flagId." count");
             $this->updateRecord($userId, $flagId, $entityDetails[1]);
         }
     }
@@ -83,5 +79,36 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
             ->condition('$flag', $flag)
             ->condition('uid', $uid)
             ->condition('entity_id', $entityId)->execute();
+    }
+    public function setFlagIsCountable($flagMachineName, $status){
+        //insert into table
+        $results = $this->connection->select('flag_countable', 'fc')
+            ->fields('fc', ['flag', 'is_countable'])
+            ->condition('fc.flag', $flagMachineName)->execute()->fetchall();
+        if ($status == 1){
+            if (count($results) == 0){
+                $this->connection->insert('flag_countable')->fields(['flag', 'is_countable'])
+                    ->values([$flagMachineName, 1])->execute();
+            }
+        }
+        else{
+            //Delete from table
+            if(count($results) != 0){
+                $this->connection->delete('flag_countable')->condition('flag', $flagMachineName)->execute();
+            }
+        }
+
+    }
+    public function isFlagCountable($flagMachineName){
+
+        //get status from table
+        $results = $this->connection->select('flag_countable', 'fc')
+            ->fields('fc', ['flag', 'is_countable'])->condition('fc.flag', $flagMachineName)
+            ->execute()->fetchall();
+        if (count($results) == 0){
+            return 0;
+        }
+
+        return 1;
     }
 }

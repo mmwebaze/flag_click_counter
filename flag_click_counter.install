@@ -48,5 +48,29 @@ function flag_click_counter_schema() {
         ),
     );
 
+    $schema['flag_countable'] = array(
+        'description' => 'Stores flags that are countable.',
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'not null' => TRUE,
+                'description' => 'Primary Key',
+            ),
+            'flag' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'default' => '',
+                'description' => "Flag machine name that will be counted.",
+            ),
+            'is_countable' => array(
+                'type' => 'int',
+                'not null' => TRUE,
+                'default' => 1,
+                'description' => "Flag countable status.",
+            ),
+        ),
+        'primary key' => array('id'),
+    );
     return $schema;
 }

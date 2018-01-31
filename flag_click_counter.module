@@ -4,4 +4,64 @@
  * @file
  * Contains flag_click_counter.module.
  */
+function flag_click_counter_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+    if ($form_id == 'flag_add_form'){
+        ;
+        $form['flag_count'] = array(
+            '#type' => 'fieldset',
+            '#title' => 'Flag Counter',
+        );
+        $form['flag_count']['form'] = [
+            '#type' => 'hidden',
+            '#value' => 'add',
+        ];
+        $form['flag_count']['enable_count'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Count flag clicks'),
+            //'#default_value' => ($flagClickCounterService->setAsCountable('flag_is') ? 1 : 0),
+            '#default_value' => 0,
+        );
+        $form['actions']['submit']['#submit'][] = 'flag_click_counter_form_submit';
+    }
+    if ($form_id == 'flag_edit_form'){
+        $id = $form_state->getFormObject()->getEntity()->id();
+        $flagClickCounterService = \Drupal::service('flag_click_counter.service');
+        $form['flag_count'] = array(
+            '#type' => 'fieldset',
+            '#title' => 'Flag Counter',
+        );
+        $form['flag_count']['form'] = [
+            '#type' => 'hidden',
+            '#value' => 'edit',
+        ];
+        $form['flag_count']['enable_count'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Count flag clicks'),
+            '#default_value' => ($flagClickCounterService->isFlagCountable($id) ? 1 : 0),
+        );
+        $form['actions']['submit']['#submit'][] = 'flag_click_counter_form_submit';
+    }
 
+    return $form;
+}
+function flag_click_counter_form_submit(array  $form, \Drupal\Core\Form\FormStateInterface $form_state){
+    $enable_count = $form_state->getValue('enable_count');
+    $form_type = $form_state->getValue('form');
+    $id = $form_state->getValue('id');
+
+    $flagClickCounterService = \Drupal::service('flag_click_counter.service');
+
+    if ($form_type == 'add'){
+        if ($enable_count == 1){
+            $flagClickCounterService->setFlagIsCountable($id, 1);
+        }
+    }
+    elseif ($form_type == 'edit'){
+        if ($enable_count == 1){
+            $flagClickCounterService->setFlagIsCountable($id, 1);
+        }
+        else{
+            $flagClickCounterService->setFlagIsCountable($id, 0);
+        }
+    }
+}

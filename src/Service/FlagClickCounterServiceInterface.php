@@ -9,4 +9,6 @@ interface FlagClickCounterServiceInterface{
     public function getUserFlagClickCounterEntity($flagId, $userId);*/
     public function countFlag($flagId, $entityDetails);
     public function getCount($entityId, $userId);
+    public function setFlagIsCountable($flagMachineName, $status);
+    public function isFlagCountable($flagMachineName);
 }
