@@ -1,8 +1,10 @@
 <?php
 namespace Drupal\flag_click_counter\EventSubscriber;
 
+use Drupal\flag\Controller\ActionLinkController;
 use Drupal\flag_click_counter\Service\FlagClickCounterServiceInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -28,12 +30,27 @@ class FlagClickCounterEventSubscriber implements EventSubscriberInterface{
             }
         }
     }
+    public function linkFlag(FilterControllerEvent $event){
+        $controller = $event->getController();
 
+        if (!is_array($controller)) {
+            drupal_set_message('**Kernal event controller**');
+            return;
+        }
+
+            //drupal_set_message('Kernal event controller'.$controller->name());
+        if ($controller instanceof ActionLinkController){
+            drupal_set_message('Kernal event controller');
+        }
+
+
+    }
     /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents() {
-        $events[KernelEvents::REQUEST][] = ['flag'];
+       // $events[KernelEvents::REQUEST][] = ['flag'];
+        $events[KernelEvents::CONTROLLER][] = ['linkFlag'];
         return $events;
     }
 }
