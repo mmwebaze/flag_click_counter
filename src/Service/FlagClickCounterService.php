@@ -22,8 +22,6 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
     }
     public function countFlag($flagId, $entityDetails){
         $userId = $this->currentUser->id();
-        $flaggedEntity = $this->getEntityById($entityDetails[1], $entityDetails[0]);
-        drupal_set_message($flaggedEntity->label());
         $this->updateCount($userId, $flagId, $entityDetails);
     }
     public function getCount($entity_id, $userId){
@@ -34,7 +32,6 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
             ->condition('fcc.uid', $userId)->execute()->fetchAssoc();
         foreach ($results as $result){
             $result[0] = $result['click_count'];
-            //drupal_set_message($result['click_count']);
         }
         return $result[0];
     }
@@ -47,16 +44,14 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
         $results = $query->fields('fcc', ['uid', 'flag','entity_id'])
             ->condition('fcc.uid', $userId)
             ->condition('fcc.flag', $flagId)
-            ->condition('fcc.entity_id', $entityDetails[1])
+            ->condition('fcc.entity_id', $entityDetails[2])
             ->execute()->fetchall();
 
         if (count($results) == 0){
-            drupal_set_message("do insert new record ".$userId." and ".$flagId);
-            $this->createRecord($userId, $flagId, $entityDetails[0], $entityDetails[1], 1);
+            $this->createRecord($userId, $flagId, $entityDetails[1], $entityDetails[2], 1);
         }
-        else{
-            drupal_set_message("Update user ".$userId." and ".$flagId." count");
-            $this->updateRecord($userId, $flagId, $entityDetails[1]);
+        else {
+            $this->updateRecord($userId, $flagId, $entityDetails[2]);
         }
     }
     private function createRecord($uid, $flag, $entityType, $entity_id, $count){

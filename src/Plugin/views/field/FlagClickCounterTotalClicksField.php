@@ -22,14 +22,13 @@ class FlagClickCounterTotalClicksField extends FieldPluginBase{
      */
     protected function defineOptions(){
         $options = parent::defineOptions();
-        $options['flag_click_counter'] = array('default' => 'article');
+
         return $options;
     }
     /**
      * {@inheritdoc}
      */
     public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-        //$form['relationship']['#default_value'] = $this->options['relationship'];
 
         parent::buildOptionsForm($form, $form_state);
     }
@@ -43,8 +42,10 @@ class FlagClickCounterTotalClicksField extends FieldPluginBase{
      * {@inheritdoc}
      */
     public function render(ResultRow $values) {
-        $user = $this->flagClickCounterService->getEntityById($values->flagging_node_field_data_id, 'flagging');
-        $count = $this->flagClickCounterService->getCount($values->nid, $user->getOwnerId());
+
+      $user = $this->flagClickCounterService->getEntityById($values->flagging_node_field_data_id, 'flagging');
+      $count = $this->flagClickCounterService->getCount($values->nid, $user->getOwnerId());
+
         return $count;
     }
 
