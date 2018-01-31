@@ -30,10 +30,8 @@ class FlagClickCounterService implements FlagClickCounterServiceInterface {
         $results = $query->fields('fcc', ['uid','click_count'])
             ->condition('fcc.entity_id', $entity_id)
             ->condition('fcc.uid', $userId)->execute()->fetchAssoc();
-        foreach ($results as $result){
-            $result[0] = $result['click_count'];
-        }
-        return $result[0];
+
+        return $results['click_count'];
     }
     public function getEntityById($entity_id, $entity_type = 'node'){
         $storage = $this->entityTypeManager->getStorage($entity_type);
