@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\flag_click_counter\EventSubscriber;
 
 use Drupal\flag\Controller\ActionLinkController;
@@ -8,48 +9,43 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class FlagClickCounterEventSubscriber implements EventSubscriberInterface{
+class FlagClickCounterEventSubscriber implements EventSubscriberInterface
+{
 
     protected $flagClickCounterService;
-    public function __construct(FlagClickCounterServiceInterface $flagClickCounterService){
+
+    public function __construct(FlagClickCounterServiceInterface $flagClickCounterService)
+    {
         $this->flagClickCounterService = $flagClickCounterService;
     }
 
-    public function flag(GetResponseEvent $event){
-        $request = $event->getRequest();
-        $path = $event->getRequest()->getPathInfo();
-        $path_array = explode('/',$path);
+    public function linkFlag(FilterControllerEvent $event)
+    {
 
-        if ($path_array['2'] == 'flag'){
-            $flag_id = $path_array[3];
+        $closure = $event->getController();
+        $reflection = new \ReflectionFunction($closure);
+        $parameters = $reflection->getStaticVariables();
 
-            if ($this->flagClickCounterService->isFlagCountable($flag_id)){
-                $query = $request->query->get('destination');
-                $entityDetails = explode('/', $query);
+        if ($parameters['controller'][0] instanceof ActionLinkController && $parameters['controller'][1] == 'flag') {
+            $entityDetails = [];
+            $flaggableEntityType = $parameters['arguments'][0]->getFlaggableEntityTypeId();
+
+            $flaggableEntityTypeId = $parameters['arguments'][1];
+            array_push($entityDetails, $flaggableEntityType, $flaggableEntityTypeId);
+
+            $flag_id = $parameters['arguments'][0]->id();
+
+            if ($this->flagClickCounterService->isFlagCountable($flag_id)) {
                 $this->flagClickCounterService->countFlag($flag_id, $entityDetails);
             }
         }
     }
-    public function linkFlag(FilterControllerEvent $event){
-        $controller = $event->getController();
 
-        if (!is_array($controller)) {
-            drupal_set_message('**Kernal event controller**');
-            return;
-        }
-
-            //drupal_set_message('Kernal event controller'.$controller->name());
-        if ($controller instanceof ActionLinkController){
-            drupal_set_message('Kernal event controller');
-        }
-
-
-    }
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents() {
-       // $events[KernelEvents::REQUEST][] = ['flag'];
+    public static function getSubscribedEvents()
+    {
         $events[KernelEvents::CONTROLLER][] = ['linkFlag'];
         return $events;
     }

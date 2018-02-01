@@ -1,6 +1,7 @@
 <?php
 
-function flag_click_counter_schema() {
+function flag_click_counter_schema()
+{
     $schema['flag_click_counter'] = array(
         'description' => 'Stores user flag click counts.',
         'fields' => array(

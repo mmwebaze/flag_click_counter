@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\flag_click_counter\Plugin\views\field;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -11,44 +12,56 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ViewsField("flag_click_counter_counts")
  */
-class FlagClickCounterTotalClicksField extends FieldPluginBase{
+class FlagClickCounterTotalClicksField extends FieldPluginBase
+{
     protected $flagClickCounterService;
-    public function __construct(array $configuration, $plugin_id, $plugin_definition, FlagClickCounterServiceInterface $flagClickCounterService) {
+
+    public function __construct(array $configuration, $plugin_id, $plugin_definition, FlagClickCounterServiceInterface $flagClickCounterService)
+    {
         parent::__construct($configuration, $plugin_id, $plugin_definition);
         $this->flagClickCounterService = $flagClickCounterService;
     }
+
     /**
      * {@inheritdoc}
      */
-    protected function defineOptions(){
+    protected function defineOptions()
+    {
         $options = parent::defineOptions();
         //$options['flag_click_counter'] = array('default' => 'article');
         return $options;
     }
+
     /**
      * {@inheritdoc}
      */
-    public function buildOptionsForm(&$form, FormStateInterface $form_state) {
+    public function buildOptionsForm(&$form, FormStateInterface $form_state)
+    {
         //$form['relationship']['#default_value'] = $this->options['relationship'];
 
         parent::buildOptionsForm($form, $form_state);
     }
+
     /**
      * {@inheritdoc}
      */
-    public function query() {
+    public function query()
+    {
 
     }
+
     /**
      * {@inheritdoc}
      */
-    public function render(ResultRow $values) {
+    public function render(ResultRow $values)
+    {
         $flaggingOwner = $this->flagClickCounterService->getEntityById($values->flagging_node_field_data_id, 'flagging');
         $count = $this->flagClickCounterService->getCount($values->nid, $flaggingOwner->getOwnerId());
         return $count;
     }
 
-    public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
+    {
         return new static(
             $configuration,
             $plugin_id,

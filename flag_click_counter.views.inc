@@ -1,9 +1,10 @@
 <?php
 
 /**
-* Implements hook_views_data_alter().
-*/
-function flag_click_counter_views_data_alter(array &$data) {
+ * Implements hook_views_data_alter().
+ */
+function flag_click_counter_views_data_alter(array &$data)
+{
 
     $data['node']['flag_click_count'] = array(
         'title' => t('Flag click counter hmmm'),

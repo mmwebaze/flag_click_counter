@@ -4,8 +4,9 @@
  * @file
  * Contains flag_click_counter.module.
  */
-function flag_click_counter_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-    if ($form_id == 'flag_add_form'){
+function flag_click_counter_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+    if ($form_id == 'flag_add_form') {
         ;
         $form['flag_count'] = array(
             '#type' => 'fieldset',
@@ -23,7 +24,7 @@ function flag_click_counter_form_alter(&$form, \Drupal\Core\Form\FormStateInterf
         );
         $form['actions']['submit']['#submit'][] = 'flag_click_counter_form_submit';
     }
-    if ($form_id == 'flag_edit_form'){
+    if ($form_id == 'flag_edit_form') {
         $id = $form_state->getFormObject()->getEntity()->id();
         $flagClickCounterService = \Drupal::service('flag_click_counter.service');
         $form['flag_count'] = array(
@@ -44,23 +45,23 @@ function flag_click_counter_form_alter(&$form, \Drupal\Core\Form\FormStateInterf
 
     return $form;
 }
-function flag_click_counter_form_submit(array  $form, \Drupal\Core\Form\FormStateInterface $form_state){
+
+function flag_click_counter_form_submit(array $form, \Drupal\Core\Form\FormStateInterface $form_state)
+{
     $enable_count = $form_state->getValue('enable_count');
     $form_type = $form_state->getValue('form');
     $id = $form_state->getValue('id');
 
     $flagClickCounterService = \Drupal::service('flag_click_counter.service');
 
-    if ($form_type == 'add'){
-        if ($enable_count == 1){
+    if ($form_type == 'add') {
+        if ($enable_count == 1) {
             $flagClickCounterService->setFlagIsCountable($id, 1);
         }
-    }
-    elseif ($form_type == 'edit'){
-        if ($enable_count == 1){
+    } elseif ($form_type == 'edit') {
+        if ($enable_count == 1) {
             $flagClickCounterService->setFlagIsCountable($id, 1);
-        }
-        else{
+        } else {
             $flagClickCounterService->setFlagIsCountable($id, 0);
         }
     }
