@@ -64,6 +64,13 @@ function flag_click_counter_schema()
                 'default' => '',
                 'description' => "Flag machine name that will be counted.",
             ),
+            /*'flag_type' => array(
+                'type' => 'varchar',
+                'length' => 6,
+                'not null' => TRUE,
+                'default' => '',
+                'description' => "Type of Flag either flag or unflag.",
+            ),*/
             'is_countable' => array(
                 'type' => 'int',
                 'not null' => TRUE,

@@ -6,7 +6,6 @@ use Drupal\flag\Controller\ActionLinkController;
 use Drupal\flag_click_counter\Service\FlagClickCounterServiceInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class FlagClickCounterEventSubscriber implements EventSubscriberInterface

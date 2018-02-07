@@ -19,9 +19,13 @@ function flag_click_counter_form_alter(&$form, \Drupal\Core\Form\FormStateInterf
         $form['flag_count']['enable_count'] = array(
             '#type' => 'checkbox',
             '#title' => t('Count flag clicks'),
-            //'#default_value' => ($flagClickCounterService->setAsCountable('flag_is') ? 1 : 0),
             '#default_value' => 0,
         );
+        /*$form['flag_count']['enable_unflag_count'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Count unflag clicks'),
+            '#default_value' => 0,
+        );*/
         $form['actions']['submit']['#submit'][] = 'flag_click_counter_form_submit';
     }
     if ($form_id == 'flag_edit_form') {
@@ -40,6 +44,11 @@ function flag_click_counter_form_alter(&$form, \Drupal\Core\Form\FormStateInterf
             '#title' => t('Count flag clicks'),
             '#default_value' => ($flagClickCounterService->isFlagCountable($id) ? 1 : 0),
         );
+        /*$form['flag_count']['enable_unflag_count'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Count unflag clicks'),
+            //'#default_value' => ($flagClickCounterService->isFlagCountable($id) ? 1 : 0),
+        );*/
         $form['actions']['submit']['#submit'][] = 'flag_click_counter_form_submit';
     }
 
