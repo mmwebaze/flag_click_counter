@@ -1,0 +1,84 @@
+<?php
+
+function flag_click_counter_schema()
+{
+    $schema['flag_click_counter'] = array(
+        'description' => 'Stores user flag click counts.',
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'not null' => TRUE,
+                'description' => 'Primary Key',
+            ),
+            'uid' => array(
+                'type' => 'int',
+                'not null' => TRUE,
+                'default' => 0,
+                'description' => "Clicker's user {users}.uid",
+            ),
+            'flag' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'default' => '',
+                'description' => "Clicked flag machine name",
+            ),
+            'entity_type' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'default' => '',
+                'description' => "Entity type the flag is associated with.",
+            ),
+            'entity_id' => array(
+                'type' => 'int',
+                'not null' => TRUE,
+                'default' => 0,
+                'description' => "Entity id the flag is attached to.",
+            ),
+            'click_count' => array(
+                'type' => 'int',
+                'not null' => TRUE,
+                'default' => 1,
+                'description' => "Number of clicks per user per flag",
+            ),
+        ),
+        'primary key' => array('id'),
+        'indexes' => array(
+            'flag' => array('flag'),
+        ),
+    );
+
+    $schema['flag_countable'] = array(
+        'description' => 'Stores flags that are countable.',
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'not null' => TRUE,
+                'description' => 'Primary Key',
+            ),
+            'flag' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'default' => '',
+                'description' => "Flag machine name that will be counted.",
+            ),
+            /*'flag_type' => array(
+                'type' => 'varchar',
+                'length' => 6,
+                'not null' => TRUE,
+                'default' => '',
+                'description' => "Type of Flag either flag or unflag.",
+            ),*/
+            'is_countable' => array(
+                'type' => 'int',
+                'not null' => TRUE,
+                'default' => 1,
+                'description' => "Flag countable status.",
+            ),
+        ),
+        'primary key' => array('id'),
+    );
+    return $schema;
+}

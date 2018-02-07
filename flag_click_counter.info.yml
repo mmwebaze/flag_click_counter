@@ -1,0 +1,7 @@
+name: Flag Click Counter
+type: module
+description: Counts the number of flags a particular resource has been flagged
+core: 8.x
+package: flags
+dependencies:
+  - flag
