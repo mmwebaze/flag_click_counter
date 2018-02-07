@@ -1,5 +1,0 @@
-entity.flag_click_counter.add_form:
-  route_name: entity.flag_click_counter.add_form
-  title: 'Add Flag click counter'
-  appears_on:
-    - entity.flag_click_counter.collection
